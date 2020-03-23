@@ -44,8 +44,24 @@ class Example(QWidget):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
             self.scale = min(17, self.scale + 1)
-        if event.key() == Qt.Key_PageDown:
-            self.scale = max(0, self.scale - 1)
+        elif event.key() == Qt.Key_PageDown:
+            self.scale = max(4, self.scale - 1)
+        elif event.key() == Qt.Key_Right:
+            self.coords[0] += 844 / 2 ** self.scale
+            if self.coords[0] > 180:
+                self.coords[0] -= 360
+        elif event.key() == Qt.Key_Left:
+            self.coords[0] -= 844 / 2 ** self.scale
+            if self.coords[0] < -180:
+                self.coords[0] += 360
+        elif event.key() == Qt.Key_Up:
+            self.coords[1] += 360 / 2 ** self.scale
+            if self.coords[1] > 90:
+                self.coords[1] -= 180
+        elif event.key() == Qt.Key_Down:
+            self.coords[1] -= 360 / 2 ** self.scale
+            if self.coords[1] < -90:
+                self.coords[1] += 180
         self.updateMap()
 
     def initUI(self):
