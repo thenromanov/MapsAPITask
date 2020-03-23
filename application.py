@@ -11,7 +11,7 @@ class Example(QWidget):
     def __init__(self):
         super().__init__()
         self.coords = [37.618909, 55.751400]
-        self.scale = [0.01, 0.01]
+        self.scale = 15
         self.getImage()
         self.initUI()
 
@@ -19,7 +19,7 @@ class Example(QWidget):
         mapServer = 'http://static-maps.yandex.ru/1.x/'
         mapParams = {
             'll': ','.join(map(str, self.coords)),
-            'spn': ','.join(map(str, self.scale)),
+            'z': str(self.scale),
             'l': 'map'
         }
         response = requests.get(mapServer, params=mapParams)
