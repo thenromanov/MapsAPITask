@@ -1,9 +1,11 @@
 import os
 import sys
 import requests
+from copy import copy
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from mapModule import *
 
 screenSize = (600, 450)
 
@@ -14,6 +16,7 @@ class Example(QMainWindow):
         self.coords = [37.618909, 55.751400]
         self.scale = 15
         self.type = 'map'
+        self.point = []
         self.getImage()
         self.initUI()
 
@@ -24,6 +27,8 @@ class Example(QMainWindow):
             'z': str(self.scale),
             'l': self.type
         }
+        if len(self.point) > 0:
+            mapParams['pt'] = '{},{},comma'.format(self.point[0], self.point[1])
         response = requests.get(mapServer, params=mapParams)
 
         if not response:
@@ -90,7 +95,21 @@ class Example(QMainWindow):
         typeHybrid = self.addToolBar('Гибрид')
         typeHybrid.addAction(hybridAction)
 
+        searchAction = QAction(QIcon('data/search.png'), 'Поиск', self)
+        searchAction.triggered.connect(self.search)
+        search = self.addToolBar('Поиск')
+        search.addAction(searchAction)
+
         self.show()
+
+    def search(self):
+        address, okBtnPressed = QInputDialog.getText(self, 'Введите адрес', 'Введите адрес')
+        if okBtnPressed:
+            coords = getAddressCoords(address)
+            if coords:
+                self.coords = coords[0].copy()
+                self.point = coords[0].copy()
+                self.updateMap()
 
     def toMap(self):
         self.type = 'map'
