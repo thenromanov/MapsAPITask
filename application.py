@@ -19,6 +19,7 @@ class Example(QMainWindow):
         self.point = []
         self.address = ''
         self.index = ''
+        self.state = False
         self.getImage()
         self.initUI()
 
@@ -57,13 +58,17 @@ class Example(QMainWindow):
         clear = self.addToolBar('Очистить')
         clear.addAction(clearAction)
 
+        indexAction = QAction(QIcon('data/index.png'), 'Индекс', self)
+        indexAction.triggered.connect(self.changeText)
+        index = self.addToolBar('Индекс')
+        index.addAction(indexAction)
+
         self.text = QLabel('', self)
         self.text.setGeometry(QRect(0, 450, 600, 30))
 
         self.show()
 
     def keyPressEvent(self, event):
-        print(event.key())
         if event.key() == Qt.Key_PageUp:
             self.scale = min(17, self.scale + 1)
         elif event.key() == Qt.Key_PageDown:
@@ -95,7 +100,7 @@ class Example(QMainWindow):
             self.address = getFullAddress(data)
             self.index = getPostalCode(data)
             text = self.address
-            if self.checkBox.isChecked() and self.index:
+            if self.state and self.index:
                 text += ', ' + self.index
             self.text.setText(text)
             self.updateMap()
@@ -138,14 +143,15 @@ class Example(QMainWindow):
                 self.address = getFullAddress(data)
                 self.index = getPostalCode(data)
                 text = self.address
-                if self.checkBox.isChecked() and self.index:
+                if self.state and self.index:
                     text += ', ' + self.index
                 self.text.setText(text)
                 self.updateMap()
 
-    def changeText(self, state):
+    def changeText(self):
+        self.state = not self.state
         if self.text.text() != '':
-            if state == Qt.Checked and self.index:
+            if self.state and self.index:
                 self.text.setText(self.address + ', ' + self.index)
             else:
                 self.text.setText(self.address)
