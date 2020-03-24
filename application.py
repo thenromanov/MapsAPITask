@@ -7,7 +7,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from mapModule import *
 
-screenSize = (600, 450)
+screenSize = (600, 480)
 
 
 class Example(QMainWindow):
@@ -105,19 +105,25 @@ class Example(QMainWindow):
         clear = self.addToolBar('Очистить')
         clear.addAction(clearAction)
 
+        self.text = QLabel('', self)
+        self.text.setGeometry(QRect(0, 450, 600, 30))
+
         self.show()
 
     def search(self):
         address, okBtnPressed = QInputDialog.getText(self, 'Введите адрес', 'Введите адрес')
         if okBtnPressed:
-            coords = getAddressCoords(address)
+            data = getAddresses(address)
+            coords = getCoords(data)
             if coords:
                 self.coords = coords[0].copy()
                 self.point = coords[0].copy()
+                self.text.setText(getFullAddress(data))
                 self.updateMap()
 
     def clear(self):
         self.point = []
+        self.text.setText('')
         self.updateMap()
 
     def toMap(self):
