@@ -92,10 +92,10 @@ class Example(QMainWindow):
         self.updateMap()
 
     def mousePressEvent(self, event):
+        deltaCoords = [event.x() - screenSize[0] / 2, event.y() - screenSize[1] / 2]
+        self.point = [self.coords[0] + deltaCoords[0] * 844 / 600 / 2 ** self.scale,
+                      self.coords[1] - (deltaCoords[1] + 15) * 360 / 450 / 2 ** self.scale]
         if event.buttons() & Qt.LeftButton:
-            deltaCoords = [event.x() - screenSize[0] / 2, event.y() - screenSize[1] / 2]
-            self.point = [self.coords[0] + deltaCoords[0] * 844 / 600 / 2 ** self.scale,
-                          self.coords[1] - (deltaCoords[1] + 15) * 360 / 450 / 2 ** self.scale]
             data = getAddresses(','.join(map(str, self.point)))
             self.address = getFullAddress(data)
             self.index = getPostalCode(data)
@@ -103,6 +103,22 @@ class Example(QMainWindow):
             if self.state and self.index:
                 text += ', ' + self.index
             self.text.setText(text)
+            self.updateMap()
+        elif event.button() & Qt.RightButton:
+            orgs = getOrganizations(self.point)['features']
+            if len(orgs) > 0:
+                orgs = list(filter(lambda org: getLength(
+                    self.point[::-1], getOrganizationInfo(org)['coords'][::-1]) < 50, orgs))  # Дополнительная проверка
+                if len(orgs) > 0:
+                    data = getOrganizationInfo(orgs[0])
+                    name = data['name']
+                    self.address = ''
+                    self.index = ''
+                    self.text.setText(name)
+                else:
+                    self.text.setText('')
+            else:
+                self.text.setText('')
             self.updateMap()
 
     def getImage(self):
