@@ -75,20 +75,20 @@ class Example(QMainWindow):
         self.image.resize(600, 450)
         self.image.setPixmap(self.pixmap)
 
-        menu = self.menuBar()
-        mapType = menu.addMenu('Тип карты')
+        mapActoin = QAction(QIcon('data/map.png'), 'Карта', self)
+        mapActoin.triggered.connect(self.toMap)
+        typeMap = self.addToolBar('Карта')
+        typeMap.addAction(mapActoin)
 
-        typeMap = QAction('Карта', self)
-        mapType.addAction(typeMap)
-        typeMap.triggered.connect(self.toMap)
+        satelliteAction = QAction(QIcon('data/satellite.png'), 'Спутник', self)
+        satelliteAction.triggered.connect(self.toSatellite)
+        typeSatellite = self.addToolBar('Спутник')
+        typeSatellite.addAction(satelliteAction)
 
-        typeSatellite = QAction('Спутник', self)
-        mapType.addAction(typeSatellite)
-        typeSatellite.triggered.connect(self.toSatellite)
-
-        typeHybrid = QAction('Гибрид', self)
-        mapType.addAction(typeHybrid)
-        typeHybrid.triggered.connect(self.toHybrid)
+        hybridAction = QAction(QIcon('data/hybrid.png'), 'Гибрид', self)
+        hybridAction.triggered.connect(self.toHybrid)
+        typeHybrid = self.addToolBar('Гибрид')
+        typeHybrid.addAction(hybridAction)
 
         self.show()
 
