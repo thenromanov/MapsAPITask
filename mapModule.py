@@ -1,4 +1,5 @@
 import requests
+from math import radians, atan2, cos, sin, pow, sqrt
 
 
 def getScale(*corners):
@@ -100,13 +101,15 @@ def getAddressDistrict(address):
         return None
 
 
-def getOrganizations(text, coords):
+def getOrganizations(coords):
     searchServer = 'https://search-maps.yandex.ru/v1/'
     searchParams = {
         'apikey': 'dda3ddba-c9ea-4ead-9010-f43fbc15c6e3',
-        'text': text,
         'lang': 'ru_RU',
+        'text': 'кафе',
         'll': '{},{}'.format(coords[0], coords[1]),
+        'rspn': '1',
+        'spn': '0.000908,0.000908',
         'type': 'biz'
     }
     response = requests.get(searchServer, params=searchParams)
