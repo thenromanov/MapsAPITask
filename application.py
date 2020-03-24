@@ -100,6 +100,11 @@ class Example(QMainWindow):
         search = self.addToolBar('Поиск')
         search.addAction(searchAction)
 
+        clearAction = QAction(QIcon('data/cross.png'), 'Очистить', self)
+        clearAction.triggered.connect(self.clear)
+        clear = self.addToolBar('Очистить')
+        clear.addAction(clearAction)
+
         self.show()
 
     def search(self):
@@ -110,6 +115,10 @@ class Example(QMainWindow):
                 self.coords = coords[0].copy()
                 self.point = coords[0].copy()
                 self.updateMap()
+
+    def clear(self):
+        self.point = []
+        self.updateMap()
 
     def toMap(self):
         self.type = 'map'
