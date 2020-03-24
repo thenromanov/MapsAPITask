@@ -1,18 +1,19 @@
 import os
 import sys
 import requests
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 screenSize = (600, 450)
 
 
-class Example(QWidget):
+class Example(QMainWindow):
     def __init__(self):
         super().__init__()
         self.coords = [37.618909, 55.751400]
         self.scale = 15
+        self.type = 'map'
         self.getImage()
         self.initUI()
 
@@ -21,7 +22,7 @@ class Example(QWidget):
         mapParams = {
             'll': ','.join(map(str, self.coords)),
             'z': str(self.scale),
-            'l': 'map'
+            'l': self.type
         }
         response = requests.get(mapServer, params=mapParams)
 
@@ -73,7 +74,35 @@ class Example(QWidget):
         self.image.move(0, 0)
         self.image.resize(600, 450)
         self.image.setPixmap(self.pixmap)
+
+        menu = self.menuBar()
+        mapType = menu.addMenu('Тип карты')
+
+        typeMap = QAction('Карта', self)
+        mapType.addAction(typeMap)
+        typeMap.triggered.connect(self.toMap)
+
+        typeSatellite = QAction('Спутник', self)
+        mapType.addAction(typeSatellite)
+        typeSatellite.triggered.connect(self.toSatellite)
+
+        typeHybrid = QAction('Гибрид', self)
+        mapType.addAction(typeHybrid)
+        typeHybrid.triggered.connect(self.toHybrid)
+
         self.show()
+
+    def toMap(self):
+        self.type = 'map'
+        self.updateMap()
+
+    def toSatellite(self):
+        self.type = 'sat'
+        self.updateMap()
+
+    def toHybrid(self):
+        self.type = 'sat,skl'
+        self.updateMap()
 
     def closeEvent(self, event):
         os.remove(self.mapFile)
