@@ -53,6 +53,36 @@ def getAddressCoords(address):
         return None
 
 
+def getCoords(jsonResponse):
+    try:
+        toponym = jsonResponse['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']
+        requestCoords = list(map(float, toponym['Point']['pos'].split()))
+        toponymCorners = jsonResponse['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['boundedBy']['Envelope']
+        lowerCorner = list(map(float, toponymCorners['lowerCorner'].split()))
+        upperCorner = list(map(float, toponymCorners['upperCorner'].split()))
+        return [requestCoords, lowerCorner, upperCorner]
+    except Exception:
+        return None
+
+
+def getFullAddress(jsonResponse):
+    try:
+        address = jsonResponse['response']['GeoObjectCollection']['featureMember'][0][
+            'GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['formatted']
+        return address
+    except Exception:
+        return None
+
+
+def getPostalCode(jsonResponse):
+    try:
+        code = jsonResponse['response']['GeoObjectCollection']['featureMember'][0][
+            'GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
+        return code
+    except Exception:
+        return None
+
+
 def getAddressDistrict(address):
     try:
         coords = getAddressCoords(address)[0]
